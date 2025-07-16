@@ -11,38 +11,38 @@ class StatusController extends Controller
     public function index(Request $request)
     {
         $token = $request->query('token');
-    
-        if (!$token) {
-            return abort(404, 'Token tidak ditemukan');
-        }
-    
+
+        if (!$token) return abort(404, 'Token tidak ditemukan');
+
         try {
-            $table_number = Crypt::decrypt($token);
+            $decryptedData = Crypt::decryptString($token);
+            list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
-            return abort(403, 'Token tidak valid');
+            abort(403, 'Token tidak valid');
         }
-    
+
         $table = \App\Models\Table::where('table_number', $table_number)
             ->where('is_active', 1)
             ->orderByDesc('id')
             ->first();
-    
-        if (!$table) {
-            return abort(403, 'Pesanan untuk meja ini sudah tidak aktif');
-        }
-    
+
+        if (!$table) abort(403, 'Pesanan untuk meja ini sudah tidak aktif');
+
         $orders = Order::with(['items.menu'])
             ->where('table_number', $table_number)
             ->where('created_at', '>=', $table->created_at)
             ->latest()
             ->get();
-    
-        $maxQueue = Order::max('queue_number');
-    
+
+        if ($request->ajax()) {
+            return view('user.status-content', [
+                'orders' => $orders
+            ])->render();
+        }
+
         return view('user.status', [
             'orders' => $orders,
             'token' => $token,
-            'maxQueue' => $maxQueue,
         ]);
     }
 }

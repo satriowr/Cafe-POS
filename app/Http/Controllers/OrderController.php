@@ -17,9 +17,10 @@ class OrderController extends Controller
         }   
 
         try {
-            $table_number = Crypt::decrypt($token);
+            $decryptedData = Crypt::decryptString($token);
+            list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
-            return abort(403, 'Token tidak valid');
+            abort(403, 'Token tidak valid');
         }   
 
         $cartItems = DB::table('carts')

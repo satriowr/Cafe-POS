@@ -155,19 +155,19 @@ class adminController extends Controller
         $userId = session('user_id');
         
         $role = DB::table('users')->where('id', $userId)->value('role');
-        $name = DB::table('users')->where('id', $userId)->value('name');
         
         if ($role !== 'admin') {
             return redirect('/login');
         }
-    
+
         $table = $request->query('table_number');
         $customerIdentity = $request->query('customer_identity');
+        $orderType = $request->query('order_type');
         
-        if (!$table || !$customerIdentity) {
+        if (!$table || !$customerIdentity || !$orderType) {
             return view('admin.qr');
         }
-    
+
         $existing = DB::table('tables')
             ->where('table_number', $table)
             ->where('is_active', true)
@@ -176,8 +176,8 @@ class adminController extends Controller
         if ($existing) {
             return redirect()->back()->with('error', "QR untuk meja $table masih aktif. Harap nonaktifkan dulu sebelum membuat baru.");
         }
-    
-        $combinedData = $table . '|' . $customerIdentity;
+
+        $combinedData = $table . '|' . $customerIdentity . '|' . $orderType;
         
         $qr_token = Crypt::encryptString($combinedData);
         
@@ -198,8 +198,8 @@ class adminController extends Controller
             'url' => $url,
         ]);
     }
-    
 
+    
     public function showTableStatus()
     {
         $userId = session('user_id');

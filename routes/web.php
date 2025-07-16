@@ -55,6 +55,9 @@ Route::get('/admin/cashier/{table_number}/receipt', [CashierController::class, '
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('user.cart.add');
 Route::get('/cart', [CartController::class, 'showCart'])->name('user.cart.show');
 Route::post('/cart/delete', [CartController::class, 'delete'])->name('user.cart.delete');
+Route::post('/cart/update', [CartController::class, 'update'])->name('user.cart.update');
+Route::get('/cart/check-available', [CartController::class, 'checkAvailable'])->name('user.cart.checkAvailable');
+
 
 Route::post('/order/create', [OrderController::class, 'create'])->name('user.order.create');
 

@@ -19,13 +19,12 @@ class menuController extends Controller
     
         try {
             $decryptedData = Crypt::decryptString($token);
-            
-            list($table_number, $customer_identity) = explode('|', $decryptedData);
+            list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');
         }
 
-        //dd($decryptedData);
+        //dd($orderType);
     
         $table = DB::table('tables')
             ->where('table_number', $table_number)
@@ -37,14 +36,15 @@ class menuController extends Controller
             abort(403, 'QR ini sudah tidak aktif');
         }
     
-        $query = DB::table('menus')->where('is_available', 1);
+        $query = DB::table('menus');
+        
         if ($category) {
             $query->where('category', $category);
         }
+
         $menus = $query->get();
     
         $categories = DB::table('menus')
-            ->where('is_available', 1)
             ->select('category')
             ->distinct()
             ->pluck('category');
@@ -55,6 +55,7 @@ class menuController extends Controller
             'categories' => $categories,
             'table_number' => $table_number,
             'selected_category' => $category, 
+            'orderType' => $orderType,
         ]);
     }
     

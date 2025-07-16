@@ -25,9 +25,10 @@ class CartController extends Controller
         }
     
         try {
-            $table_number = Crypt::decrypt($token);
+            $decryptedData = Crypt::decryptString($token);
+            list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
-            return abort(403, 'Token tidak valid');
+            abort(403, 'Token tidak valid');
         }
     
         $table = \App\Models\Table::where('table_number', $table_number)
@@ -75,9 +76,10 @@ class CartController extends Controller
         }
     
         try {
-            $table_number = Crypt::decrypt($token);
+            $decryptedData = Crypt::decryptString($token);
+            list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
-            return abort(403, 'Token tidak valid');
+            abort(403, 'Token tidak valid');
         }
     
         $table = \App\Models\Table::where('table_number', $table_number)
@@ -86,7 +88,11 @@ class CartController extends Controller
             ->first();
     
         if (!$table) {
-            return abort(403, 'Pesanan untuk meja ini sudah tidak aktif');
+            return abort(403, 'QR ini sudah tidak aktif');
+        }
+
+        if ($table->qr_token !== $token) {
+            return abort(403, 'QR ini sudah tidak aktif');
         }
     
         $cartItems = \App\Models\Cart::with('menu')
@@ -111,4 +117,51 @@ class CartController extends Controller
 
         return back()->with('success', 'Item berhasil dihapus');
     }
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'cart_id' => 'required|exists:carts,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
+        $cart = Cart::findOrFail($request->cart_id);
+        $cart->quantity = $request->quantity;
+        $cart->save();
+
+        $newTotalPrice = $cart->quantity * $cart->menu->price;
+
+        $newGrandTotal = Cart::join('menus', 'carts.menu_id', '=', 'menus.id')
+        ->where('carts.table_number', $cart->table_number)
+        ->sum(DB::raw('carts.quantity * menus.price'));
+
+        return redirect()->route('user.cart.show', ['token' => $request->token])
+            ->with(['newTotalPrice' => $newTotalPrice, 'newGrandTotal' => $newGrandTotal]);
+    }
+
+    public function checkAvailable(Request $request)
+{
+    $token = $request->query('token');
+    if (!$token) return response()->json([]);
+
+    try {
+        $decryptedData = \Crypt::decryptString($token);
+        list($table_number) = explode('|', $decryptedData);
+    } catch (\Exception $e) {
+        return response()->json([]);
+    }
+
+    // Ambil cart yang menu-nya tidak available
+    $notAvailableCartIds = \App\Models\Cart::with('menu')
+        ->where('table_number', $table_number)
+        ->whereHas('menu', function ($q) {
+            $q->where('is_available', 0);
+        })
+        ->pluck('id')
+        ->toArray();
+
+    return response()->json($notAvailableCartIds);
+}
+
+
 }
