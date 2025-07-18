@@ -13,6 +13,7 @@ use App\Http\Controllers\KitchenController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\AdminReceiptController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\PaymentController;
 
 
 Route::get('/logout', function () {
@@ -60,6 +61,10 @@ Route::get('/cart/check-available', [CartController::class, 'checkAvailable'])->
 
 
 Route::post('/order/create', [OrderController::class, 'create'])->name('user.order.create');
+Route::post('/order/create/cashless', [OrderController::class, 'createCashless'])->name('user.order.Createcashhless');
+
+Route::post('/payment/success', [PaymentController::class, 'handleSuccess'])->name('payment.success');
+
 
 Route::get('/status', [StatusController::class, 'index'])->name('user.status');
 

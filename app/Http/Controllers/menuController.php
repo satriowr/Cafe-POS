@@ -24,7 +24,7 @@ class menuController extends Controller
             abort(403, 'Token tidak valid');
         }
 
-        //dd($orderType);
+        //dd($decryptedData);
     
         $table = DB::table('tables')
             ->where('table_number', $table_number)

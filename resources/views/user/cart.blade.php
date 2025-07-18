@@ -5,7 +5,7 @@
 <header class="d-flex align-items-center mb-3" style="background-color: #f8f9fa; border-radius: 12px; padding-left: 15px; padding-right: 15px; padding-top: 10px; padding-bottom: 10px;">
     <div>
         <h5 class="mb-1 fw-bold" style="color: #038447;">Keranjang</h5>
-        <p class="mb-0 text-muted" style="font-size: 0.9rem;">Menampilkan pesanan kamu</p>
+        <p class="mb-0 text-muted" style="font-size: 0.9rem;">Periksa kembali pesanan kamu</p>
     </div>
 </header>
 
@@ -74,11 +74,25 @@
             @endforeach
         </div>
 
-        <div class="mt-3 d-flex justify-content-between">
-            <strong>Total</strong>
-            <strong>Rp <span id="grand-total">{{ number_format($grandTotal, 0, ',', '.') }}</span></strong>
+        <div class="mt-4">
+            <div class="d-flex justify-content-between">
+                <strong>Subtotal</strong>
+                <strong>Rp <span id="grand-subtotal">{{ number_format($grandTotal, 0, ',', '.') }}</span></strong>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Pajak (10%)</span>
+                <span>Rp <span id="tax">{{ number_format($grandTotal * 0.10, 0, ',', '.') }}</span></span>
+            </div>
+            <div class="d-flex justify-content-between">
+                <span>Service Charge</span>
+                <span>Rp <span id="service-charge">{{ number_format($grandTotal * 0.01, 0, ',', '.') }}</span></span>
+            </div>
+            <hr class="my-2">
+            <div class="d-flex justify-content-between">
+                <strong>Total</strong>
+                <strong>Rp <span id="grand-total-final">{{ number_format($grandTotal * 1.11, 0, ',', '.') }}</span></strong>
+            </div>
         </div>
-        <small>Harga sebelum pajak</small>
         <br><br>
         <div class="container-button-submit">
             <div class="mt-4">
@@ -88,7 +102,7 @@
                 </form>
             </div>
             <div class="mt-2">
-                <form action="{{ route('user.order.create', ['token' => $token]) }}" method="POST">
+                <form action="{{ route('user.order.Createcashhless', ['token' => $token]) }}" method="POST">
                     @csrf
                     <button type="submit" class="btn btn-success w-100">Bayar Non Tunai</button>
                 </form>
@@ -120,11 +134,22 @@ document.querySelectorAll('.form-cart-delete').forEach(function(form) {
 function updateGrandTotal() {
     let grandTotal = 0;
     document.querySelectorAll('.item-total').forEach(function(itemTotalElement) {
-        var itemTotal = itemTotalElement.innerText.replace('Rp ', '').replace('.', '');
+        var itemTotal = itemTotalElement.innerText.replace(/\./g, '').replace('Rp ', '');
         grandTotal += parseInt(itemTotal);
     });
-    document.getElementById('grand-total').innerText = grandTotal.toLocaleString();
+
+    // Hitung pajak dan service charge
+    let tax = Math.round(grandTotal * 0.10);
+    let serviceCharge = Math.round(grandTotal * 0.01);
+    let totalFinal = grandTotal + tax + serviceCharge;
+
+    // Update semua elemen
+    document.getElementById('grand-subtotal').innerText = grandTotal.toLocaleString();
+    document.getElementById('tax').innerText = tax.toLocaleString();
+    document.getElementById('service-charge').innerText = serviceCharge.toLocaleString();
+    document.getElementById('grand-total-final').innerText = totalFinal.toLocaleString();
 }
+
 
 function checkAndRemoveUnavailableCart() {
     fetch("{{ route('user.cart.checkAvailable', ['token' => $token]) }}", {

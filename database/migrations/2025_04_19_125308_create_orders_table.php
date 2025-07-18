@@ -14,11 +14,14 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('table_number'); 
+            $table->string('payment_method')->nullable(); 
+            $table->string('payment_token')->nullable()->unique();
             $table->integer('queue_number'); 
             $table->enum('status', ['Menunggu', 'Selesai'])->default('Menunggu');
             $table->boolean('is_paid')->default(false);
             $table->unsignedBigInteger('receipt_id')->nullable();
-            $table->foreign('receipt_id')->references('id')->on('receipts')->onDelete('set null');
+            $table->foreign('receipt_id')->references('id')->on('receipts')->onDelete('set null'        );
+            $table->timestamp('expires_at')->nullable(      );
             $table->timestamps();
         });
     }

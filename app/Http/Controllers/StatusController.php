@@ -31,6 +31,15 @@ class StatusController extends Controller
         $orders = Order::with(['items.menu'])
             ->where('table_number', $table_number)
             ->where('created_at', '>=', $table->created_at)
+            ->when(true, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('payment_method', '!=', 'cashless')
+                      ->orWhere(function ($q2) {
+                          $q2->where('payment_method', 'cashless')
+                             ->where('is_paid', true);
+                      });
+                });
+            })
             ->latest()
             ->get();
 

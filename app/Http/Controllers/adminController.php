@@ -242,6 +242,10 @@ class adminController extends Controller
                 'is_active' => $request->is_active,
                 'updated_at' => now(),
             ]);
+        
+        if ((int) $request->is_active === 0) {
+            DB::table('carts')->where('table_number', $table_number)->delete();
+        }
 
         return redirect()->route('admin.tables')->with('success', 'Status meja berhasil diperbarui.');
     }
