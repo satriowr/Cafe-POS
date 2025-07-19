@@ -171,6 +171,7 @@ class adminController extends Controller
         $existing = DB::table('tables')
             ->where('table_number', $table)
             ->where('is_active', true)
+            ->where('table_number', '!=', 100)
             ->first();
         
         if ($existing) {

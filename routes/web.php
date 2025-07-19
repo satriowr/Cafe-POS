@@ -48,6 +48,7 @@ Route::get('/admin/qr-preview', [adminController::class, 'showQrPreview'])->name
 Route::get('/admin/tables', [adminController::class, 'showTableStatus'])->name('admin.tables');
 Route::put('/admin/tables/status/{table_number}', [adminController::class, 'updateTableStatus'])->name('tables.updateStatus');
 
+Route::get('/admin/cashier/search', [CashierController::class, 'searchOrder'])->name('admin.cashier.searchOrder');
 Route::get('/admin/cashier/data', [CashierController::class, 'getData'])->name('admin.cashier.data');
 Route::get('/admin/cashier', [CashierController::class, 'index'])->name('admin.cashier');
 Route::get('/admin/cashier/{table_number}', [CashierController::class, 'show'])->name('admin.cashier.show');
@@ -90,10 +91,13 @@ Route::get('admin/payment/inquiry', [CashierController::class, 'inquiry'])->name
 Route::get('/admin/print-receipt/{receipt}', [AdminController::class, 'printReceipt'])->name('admin.print.receipt');
 
 
-Route::post('/admin/cashier/{table_number}/add-item/{menu_id}', [CashierController::class, 'addItem'])->name('admin.cashier.addItem');
+Route::post('/admin/cashier/add-item/{menu_id}', [CashierController::class, 'addItem'])->name('admin.cashier.addItem');
 Route::post('/admin/cashier/update-item/{order_id}/{item_id}', [CashierController::class, 'updateItem'])->name('admin.cashier.updateItem');
 Route::post('/admin/cashier/remove-item/{order_id}/{item_id}', [CashierController::class, 'removeItem'])->name('admin.cashier.removeItem');
 
+Route::post('/admin/cashier/update-receipt/{receipt_id}', [CashierController::class, 'updateReceipt'])->name('admin.cashier.updateReceipt');
+Route::post('/admin/cashier/update-receipt/{receipt_id}/qris', [CashierController::class, 'updateReceiptQRIS'])->name('admin.cashier.updateReceiptQris');
+Route::post('/admin/cashier/update-receipt/{receipt_id}/cash', [CashierController::class, 'updateReceiptCash'])->name('admin.cashier.updateReceiptCash');
 
 
 Route::fallback(function () {

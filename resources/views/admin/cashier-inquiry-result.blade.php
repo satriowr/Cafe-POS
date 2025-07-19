@@ -43,7 +43,7 @@
             <p><strong>Total:</strong> Rp {{ number_format($receipt->grand_total, 0, ',', '.') }}</p>
 
             <!-- Button to print receipt -->
-            <a href="{{ route('admin.receipt.show', ['receipt' => $receipt->id]) }}" class="btn btn-warning">Cetak Nota</a>
+            <a href="{{ route('admin.receipt.show', ['receipt' => $receipt->id]) }}" class="btn btn-warning" target="_blank">Cetak Nota</a>
         </div>
     </div>
 @endsection

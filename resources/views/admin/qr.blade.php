@@ -74,7 +74,7 @@
         <!-- Meja 0 placed below -->
         <div class="row mt-3">
           <div class="col-12">
-            <button type="button" class="btn btn-outline-success w-100" onclick="selectTable(0)">Takeaway</button>
+            <button type="button" class="btn btn-outline-success w-100" onclick="selectTable(100)">Takeaway</button>
           </div>
         </div>
       </div>
@@ -110,14 +110,14 @@ function selectTable(tableNumber) {
     document.getElementById('table_number').value = tableNumber;
 
     // Display the selected table number or "Takeaway" for table 0
-    if (tableNumber === 0) {
+    if (tableNumber === 100) {
         document.getElementById('selected-table').innerHTML = "Tipe Pemesanan: Takeaway";
     } else {
         document.getElementById('selected-table').innerHTML = "Nomor Meja yang Dipilih: " + tableNumber;
     }
 
     // If table number 0 is selected, disable Dine-In radio button and set Takeaway as selected
-    if (tableNumber === 0) {
+    if (tableNumber === 100) {
         document.getElementById('dine_in').disabled = true;  // Disable Dine-In
         document.getElementById('takeaway').checked = true;  // Set Takeaway as selected
     } else {

@@ -99,7 +99,13 @@
   <div class="line"></div>
 
   <div>
-    Pembayaran: {{ $receipt->payment_type == 'qris' ? 'QRIS' : 'Tunai' }}<br>
+    Pembayaran: {{ $receipt->payment_type }}<br>
+    Selisih Pembayaran: Rp. {{ $difference ?? 0 }}<br>
+    @if(isset($difference) && $difference < 0)
+        <p>Dibayar: Rp {{ str_replace('-', '', $difference) }}</p>
+    @elseif(!isset($difference) || $difference === null)
+        <p>Dibayar: Rp 0</p>
+    @endif
     @if($receipt->payment_type == 'cash')
       Uang Diterima: Rp. {{ number_format($receipt->cash_amount, 0, ',', '.') }}<br>
       Kembalian: Rp. {{ number_format($receipt->change, 0, ',', '.') }}<br>

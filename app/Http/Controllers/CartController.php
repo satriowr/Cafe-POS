@@ -90,13 +90,13 @@ class CartController extends Controller
             ->orderByDesc('id')
             ->first();
     
-        if (!$table) {
-            return abort(403, 'QR ini sudah tidak aktif');
-        }
+        // if (!$table) {
+        //     return abort(403, 'QR ini sudah tidak aktif');
+        // }
 
-        if ($table->qr_token !== $token) {
-            return abort(403, 'QR ini sudah tidak aktif');
-        }
+        // if ($table->qr_token !== $token) {
+        //     return abort(403, 'QR ini sudah tidak aktif');
+        // }
     
         $cartItems = \App\Models\Cart::with('menu')
             ->where('table_number', $table_number)
