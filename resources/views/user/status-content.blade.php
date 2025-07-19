@@ -8,6 +8,7 @@
     @foreach($orders as $order)
         <div class="mb-3 rounded p-3" style="background-color: #EFEFEF; color: black;">
             <h5>Antrian #{{ $order->queue_number }}</h5>
+            <p style="margin:0"><strong>ID Order: {{ $order->id }}</strong></p>
             <p>Status: <strong>{{ ucfirst($order->status) }}</strong></p>
             <ul class="mb-0">
                 @foreach($order->items as $item)

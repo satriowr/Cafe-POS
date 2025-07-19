@@ -104,12 +104,9 @@
 </style>
 
 <script>
-  // Function to set table number when selecting table
 function selectTable(tableNumber) {
-    // Set table number in the hidden input
     document.getElementById('table_number').value = tableNumber;
 
-    // Display the selected table number or "Takeaway" for table 0
     if (tableNumber === 100) {
         document.getElementById('selected-table').innerHTML = "Tipe Pemesanan: Takeaway";
     } else {
