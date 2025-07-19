@@ -48,8 +48,8 @@
     </div>
 
     <script>
-        // setInterval(function() {
-        //     location.reload(); 
-        // }, 5000);
+        setInterval(function() {
+            location.reload(); 
+        }, 5000);
     </script>
 @endsection
