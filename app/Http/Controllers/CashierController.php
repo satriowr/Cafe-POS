@@ -207,10 +207,10 @@ class CashierController extends Controller
         }
         $subtotalWith15Percent = $subtotal * 1.15;
 
-        //dd($ordersWithGrandTotal[0]->grand_total);
+        //dd($ordersWithGrandTotal);
         //dd($subtotal);
 
-        $difference = $ordersWithGrandTotal[0]->grand_total - $subtotalWith15Percent;
+        $difference = ($ordersWithGrandTotal->isEmpty() || $ordersWithGrandTotal[0]->grand_total == 0) ? 0 : $ordersWithGrandTotal[0]->grand_total - $subtotalWith15Percent;
 
         return view('admin.cashier-detail', [
             'tableNumber' => $table_number,

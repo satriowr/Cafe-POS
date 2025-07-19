@@ -167,12 +167,53 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="btn-bayar-tunai-trigger" class="btn btn-success" disabled>Bayar</button>
+                        <button type="button" id="btn-bayar-tunai-trigger" class="btn btn-success" >Bayar</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+<script>
+    // Event listener untuk tombol "Bayar" di modal tunai
+    document.getElementById('btn-bayar-tunai-trigger').addEventListener('click', function () {
+        const total = {{ (int) $total }};
+        const input = document.getElementById('uang-pelanggan');
+        const uang = parseInt(input.value);
+
+        if (!isNaN(uang) && uang >= total) {
+            const kembalian = uang - total;
+
+            document.getElementById('uang-diterima').textContent = `Rp ${uang.toLocaleString('id-ID')}`;
+            document.getElementById('kembalian').textContent = `Rp ${kembalian.toLocaleString('id-ID')}`;
+
+            document.getElementById('tunai-info').classList.remove('d-none');
+
+            document.getElementById('cash-amount').value = uang;
+            document.getElementById('change').value = kembalian;
+
+            document.getElementById('btn-bayar-tunai').disabled = false;
+            document.getElementById('btn-bayar-tunai-trigger').disabled = true; // Disable tombol "Bayar" yang pertama kali
+        } else {
+            alert('Nominal uang tidak mencukupi.');
+        }
+    });
+
+    // Function untuk memperbarui kembalian setiap kali input berubah
+    document.getElementById('uang-pelanggan').addEventListener('input', function () {
+        const total = {{ (int) $total }};
+        const uang = parseInt(this.value);
+
+        if (!isNaN(uang) && uang >= total) {
+            const kembalian = uang - total;
+            document.getElementById('kembalian').textContent = `Rp ${kembalian.toLocaleString('id-ID')}`;
+            document.getElementById('btn-bayar-tunai-trigger').disabled = false;
+        } else {
+            document.getElementById('kembalian').textContent = '';
+            document.getElementById('btn-bayar-tunai-trigger').disabled = true;
+        }
+    });
+</script>
 
     <div class="modal fade" id="updateOrderModal" tabindex="-1" aria-labelledby="updateOrderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -213,18 +254,30 @@
                         <button class="btn btn-success mt-2" id="pay-cash-btn" data-bs-dismiss="modal" 
                                 onclick="payWithCash()" style="width: 100%;" data-bs-toggle="modal" data-bs-target="#modaltunai">Bayar Tunai</button>
                     @else
-                        <form action="{{ route('admin.cashier.updateReceipt', ['receipt_id' => $orders[0]->receipt_id]) }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="total_price" value="{{ $subtotal }}">
-                            <input type="hidden" name="tax_amount" value="{{ $tax }}">
-                            <input type="hidden" name="service_charge" value="{{ $service }}">
-                            <input type="hidden" name="grand_total" value="{{ $total }}">
-                            <input type="hidden" name="difference" value="{{ number_format($difference, 0, ',', '.') }}">
-                            
-                            <button type="submit" class="btn btn-success mt-3" style="width: 100%;">
-                                Cetak Struk Pembayaran
-                            </button>
-                        </form>
+                    <form 
+                        action="{{ $orders[0]->receipt_id ? route('admin.cashier.updateReceipt', ['receipt_id' => $orders[0]->receipt_id]) : '#' }}" 
+                        method="POST" 
+                        @if(!$orders[0]->receipt_id) 
+                            disabled 
+                        @endif
+                    >
+                        @csrf
+                        <input type="hidden" name="total_price" value="{{ $subtotal }}">
+                        <input type="hidden" name="tax_amount" value="{{ $tax }}">
+                        <input type="hidden" name="service_charge" value="{{ $service }}">
+                        <input type="hidden" name="grand_total" value="{{ $total }}">
+                        <input type="hidden" name="difference" value="{{ number_format($difference, 0, ',', '.') }}">
+                        
+                        <button type="submit" 
+                            class="btn btn-success mt-3" 
+                            style="width: 100%;" 
+                            @if(!$orders[0]->receipt_id) 
+                                disabled 
+                            @endif
+                        >
+                            Cetak Struk Pembayaran
+                        </button>
+                    </form>
                     @endif
                 </div>
             </div>
@@ -247,7 +300,12 @@
                 @endif
 
                 <!-- Form Submit -->
-                <form method="POST" action="{{ route('admin.cashier.updateReceiptCash', ['receipt_id' => $orders[0]->receipt_id]) }}">
+                <form method="POST" 
+                    action="{{ $orders[0]->receipt_id ? route('admin.cashier.updateReceiptCash', ['receipt_id' => $orders[0]->receipt_id]) : '#' }}" 
+                    @if(!$orders[0]->receipt_id) 
+                        disabled 
+                    @endif
+                >
                     @csrf
                     <div class="mb-3 mt-3">
                         <label for="uang-pelanggan" class="form-label">Uang Pelanggan</label>
@@ -255,7 +313,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="kembalian" class="form-label">Kembalian</label>
-                        <input type="text" name="change" class="form-control" id="kembalian2" disabled>
+                        <input type="text" name="change" class="form-control" id="kembalian2" disabled />
                         <input type="hidden" name="change" id="change-numeric">
                         <input type="hidden" name="difference" value="{{ $difference_plus }}">
                         <input type="hidden" name="total_price" value="{{ $subtotal }}">
@@ -266,7 +324,16 @@
                     <div class="alert alert-success" role="alert">
                         Selalu Hitung kembali sebelum menyelesaikan pembayaran.
                     </div>
-                    <button type="submit" class="btn btn-success mt-3" id="btn-bayar-tunai" style="width: 100%;">Bayar & Cetak Receipt</button>
+                    <button type="submit" 
+                            class="btn btn-success mt-3" 
+                            id="btn-bayar-tunai" 
+                            style="width: 100%;"
+                            @if(!$orders[0]->receipt_id || $difference > 0) 
+                                disabled 
+                            @endif
+                    >
+                        Bayar & Cetak Receipt
+                    </button>
                 </form>
             </div>
         </div>
