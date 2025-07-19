@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use App\Models\Cart;
 use App\Models\Menu;
+use App\Models\Order;
+use App\Models\Table;
+use App\Models\Receipt;
 
 
 class CartController extends Controller
@@ -25,7 +28,7 @@ class CartController extends Controller
         }
     
         try {
-            $decryptedData = Crypt::decryptString($token);
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
             list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');
@@ -76,7 +79,7 @@ class CartController extends Controller
         }
     
         try {
-            $decryptedData = Crypt::decryptString($token);
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
             list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');
@@ -140,28 +143,27 @@ class CartController extends Controller
     }
 
     public function checkAvailable(Request $request)
-{
-    $token = $request->query('token');
-    if (!$token) return response()->json([]);
+    {
+        $token = $request->query('token');
+        if (!$token) return response()->json([]);
 
-    try {
-        $decryptedData = \Crypt::decryptString($token);
-        list($table_number) = explode('|', $decryptedData);
-    } catch (\Exception $e) {
-        return response()->json([]);
+        try {
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
+            list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
+        } catch (\Exception $e) {
+            return response()->json([]);
+        }
+
+        $notAvailableCartIds = \App\Models\Cart::with('menu')
+            ->where('table_number', $table_number)
+            ->whereHas('menu', function ($q) {
+                $q->where('is_available', 0);
+            })
+            ->pluck('id')
+            ->toArray();
+
+        return response()->json($notAvailableCartIds);
     }
-
-    // Ambil cart yang menu-nya tidak available
-    $notAvailableCartIds = \App\Models\Cart::with('menu')
-        ->where('table_number', $table_number)
-        ->whereHas('menu', function ($q) {
-            $q->where('is_available', 0);
-        })
-        ->pluck('id')
-        ->toArray();
-
-    return response()->json($notAvailableCartIds);
-}
 
 
 }

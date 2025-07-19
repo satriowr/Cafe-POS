@@ -11,7 +11,9 @@ class Order extends Model
         'queue_number',
         'status',
         'is_paid',
-        'receipt_id'
+        'receipt_id',
+        'payment_token',
+        'payment_method',
     ];
 
     public function items()

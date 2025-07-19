@@ -22,11 +22,11 @@ class OrderController extends Controller
         }   
 
         try {
-            $decryptedData = Crypt::decryptString($token);
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
             list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');
-        }   
+        } 
 
         $cartItems = DB::table('carts')
             ->where('table_number', $table_number)
@@ -44,12 +44,14 @@ class OrderController extends Controller
         $queue_number = $latestOrderToday ? $latestOrderToday->queue_number + 1 : 1;    
 
         $order_id = DB::table('orders')->insertGetId([
-            'table_number' => $table_number,
-            'queue_number' => $queue_number,
-            'status' => 'Menunggu',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]); 
+            'table_number'    => $table_number,
+            'payment_method'  => 'cash',
+            'queue_number'    => $queue_number,
+            'status'          => 'Menunggu',
+            'is_paid'         => false,
+            'created_at'      => now(),
+            'updated_at'      => now(),
+        ]);
 
         foreach ($cartItems as $item) {
             DB::table('order_items')->insert([
@@ -64,7 +66,7 @@ class OrderController extends Controller
 
         DB::table('carts')->where('table_number', $table_number)->delete(); 
 
-        return redirect()->route('user.status', ['token' => $token])->with('success', 'Pesanan berhasil dibuat!');
+        return redirect()->route('user.status', ['token' => $token]);
     }
 
     public function createCashless(Request $request)
@@ -76,11 +78,13 @@ class OrderController extends Controller
         }
 
         try {
-            $decryptedData = Crypt::decryptString($token);
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
             list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');
         }
+
+        //dd($customer_identity);
 
         Config::$serverKey = env('MIDTRANS_SERVER_KEY');
         Config::$isProduction = false;

@@ -15,12 +15,12 @@ class StatusController extends Controller
         if (!$token) return abort(404, 'Token tidak ditemukan');
 
         try {
-            $decryptedData = Crypt::decryptString($token);
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
             list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');
         }
-
+        //dd($table_number, $customer_identity, $orderType);
         $table = \App\Models\Table::where('table_number', $table_number)
             ->where('is_active', 1)
             ->orderByDesc('id')

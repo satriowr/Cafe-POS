@@ -15,7 +15,7 @@
     }
     .sidebar {
       height: 100vh;
-      width: 235px;
+      width: 239px;
       position: fixed;
       top: 0;
       left: 0;
@@ -84,6 +84,9 @@
         <a class="nav-link {{ Request::is('admin/cashier') ? 'active' : '' }}" href="/admin/cashier">
             <i class="fas fa-cash-register {{ Request::is('admin/cashier') ? '' : 'text-muted' }}"></i> &nbsp Kasir
         </a>
+        <a class="nav-link {{ Request::is('admin/inquiry') ? 'active' : '' }}" href="/admin/inquiry">
+            <i class="fas fa-print {{ Request::is('admin/inquiry') ? '' : 'text-muted' }}"></i> &nbsp Cetak Pembayaran
+        </a>
         <a class="nav-link {{ Request::is('admin/menus') ? 'active' : '' }}" href="/admin/menus">
             <i class="fas fa-concierge-bell {{ Request::is('admin/menus') ? '' : 'text-muted' }}"></i> &nbsp Menu Nala
         </a>
@@ -107,24 +110,6 @@
     @yield('content')
   </div>
 
-  <script>
-  const sidebar = document.getElementById('sidebar');
-  const content = document.getElementById('mainContent');
-  const toggleTrigger = document.getElementById('sidebarToggle');
-
-  toggleTrigger.addEventListener('click', () => {
-    sidebar.classList.toggle('hidden');
-    content.classList.toggle('expanded');
-
-    if (sidebar.classList.contains('hidden')) {
-      toggleTrigger.innerHTML = '&#9776;'; // ☰
-      toggleTrigger.classList.add('rotate-anim');
-    } else {
-      toggleTrigger.innerText = 'Nala';
-      toggleTrigger.classList.remove('rotate-anim');
-    }
-  });
-</script>
 
 <script>
   function updateDateTime() {

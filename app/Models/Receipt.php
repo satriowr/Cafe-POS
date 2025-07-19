@@ -17,7 +17,8 @@ class Receipt extends Model
         'paid_at',
         'payment_type', 
         'cash_amount', 
-        'change',       
+        'change',   
+        'payment_token'    
     ];
 
     protected $dates = ['paid_at'];

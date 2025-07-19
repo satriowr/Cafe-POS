@@ -18,7 +18,7 @@ class menuController extends Controller
         }
     
         try {
-            $decryptedData = Crypt::decryptString($token);
+            $decryptedData = base64_decode(strtr($token, '-_', '+/'));
             list($table_number, $customer_identity, $orderType) = explode('|', $decryptedData);
         } catch (\Exception $e) {
             abort(403, 'Token tidak valid');

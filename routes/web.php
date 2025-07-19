@@ -14,6 +14,8 @@ use App\Http\Controllers\CashierController;
 use App\Http\Controllers\AdminReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PaymentController;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReceiptEmail;
 
 
 Route::get('/logout', function () {
@@ -51,6 +53,7 @@ Route::get('/admin/cashier', [CashierController::class, 'index'])->name('admin.c
 Route::get('/admin/cashier/{table_number}', [CashierController::class, 'show'])->name('admin.cashier.show');
 Route::post('/admin/cashier/{table_number}/pay', [CashierController::class, 'payBill'])->name('admin.cashier.pay');
 Route::get('/admin/cashier/{table_number}/receipt', [CashierController::class, 'receipt'])->name('admin.cashier.receipt');
+Route::get('/admin/receipt/{receipt}', [CashierController::class, 'showReceipt'])->name('admin.receipt.show');
 
 
 Route::post('/cart/add', [CartController::class, 'addToCart'])->name('user.cart.add');
@@ -64,6 +67,7 @@ Route::post('/order/create', [OrderController::class, 'create'])->name('user.ord
 Route::post('/order/create/cashless', [OrderController::class, 'createCashless'])->name('user.order.Createcashhless');
 
 Route::post('/payment/success', [PaymentController::class, 'handleSuccess'])->name('payment.success');
+Route::get('/payment/update', [PaymentController::class, 'updatePayment'])->name('payment.update');
 
 
 Route::get('/status', [StatusController::class, 'index'])->name('user.status');
@@ -79,6 +83,16 @@ Route::get('/admin/receipt/{receipt}', [AdminReceiptController::class, 'show'])-
 
 Route::get('/admin/report', [ReportController::class, 'index'])->name('admin.report');
 Route::get('/laporan-penjualan/download', [ReportController::class, 'download'])->name('laporan.download');
+
+Route::get('/admin/inquiry', [CashierController::class, 'inquiry_index'])->name('admin.cashier.inquiry');
+Route::get('admin/payment/inquiry', [CashierController::class, 'inquiry'])->name('admin.cashier.inquiry');
+// Menambahkan route untuk print receipt
+Route::get('/admin/print-receipt/{receipt}', [AdminController::class, 'printReceipt'])->name('admin.print.receipt');
+
+
+Route::post('/admin/cashier/{table_number}/add-item/{menu_id}', [CashierController::class, 'addItem'])->name('admin.cashier.addItem');
+Route::post('/admin/cashier/update-item/{order_id}/{item_id}', [CashierController::class, 'updateItem'])->name('admin.cashier.updateItem');
+Route::post('/admin/cashier/remove-item/{order_id}/{item_id}', [CashierController::class, 'removeItem'])->name('admin.cashier.removeItem');
 
 
 

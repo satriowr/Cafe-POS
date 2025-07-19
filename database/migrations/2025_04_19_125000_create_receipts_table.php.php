@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('tax_amount');
             $table->integer('service_charge');
             $table->integer('grand_total');
+            $table->string('payment_token')->nullable();
             $table->string('cashier_name')->default('Levi');
             $table->timestamp('paid_at')->useCurrent();
             $table->string('payment_type');

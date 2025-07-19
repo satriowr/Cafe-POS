@@ -178,9 +178,9 @@ class adminController extends Controller
         }
 
         $combinedData = $table . '|' . $customerIdentity . '|' . $orderType;
+        $qr_token = rtrim(strtr(base64_encode($combinedData), '+/', '-_'), '=');
         
-        $qr_token = Crypt::encryptString($combinedData);
-        
+        //dd($qr_token);
         DB::table('tables')->insert([
             'table_number' => $table,
             'qr_token' => $qr_token,
@@ -245,6 +245,7 @@ class adminController extends Controller
         
         if ((int) $request->is_active === 0) {
             DB::table('carts')->where('table_number', $table_number)->delete();
+            DB::table('tables')->where('table_number', $table_number)->delete();
         }
 
         return redirect()->route('admin.tables')->with('success', 'Status meja berhasil diperbarui.');
