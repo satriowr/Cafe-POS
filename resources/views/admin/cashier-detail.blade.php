@@ -54,7 +54,7 @@
                                         <td>
                                             <form action="{{ route('admin.cashier.updateItem', ['order_id' => $item->order_id, 'item_id' => $item->id]) }}" method="POST">
                                                 @csrf
-                                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="form-control w-25" required />
+                                                <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="form-control" style="width: 100px;" required />
                                                 <button type="submit" class="btn btn-warning btn-sm mt-2">Update</button>
                                             </form>
                                         </td>
