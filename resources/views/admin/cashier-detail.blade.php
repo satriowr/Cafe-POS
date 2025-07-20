@@ -101,13 +101,13 @@
             <div class="mt-4">
                 @php
                     $tax = $subtotal * 0.1;
-                    $service = $subtotal * 0.05;
+                    $service = $subtotal * 0.01;
                     $total = $subtotal + $tax + $service;
                 @endphp
 
                 <p style="margin:0"><strong>Subtotal:</strong> Rp {{ number_format($subtotal, 0, ',', '.') }}</p>
                 <p style="margin:0"><strong>Pajak (10%):</strong> Rp {{ number_format($tax, 0, ',', '.') }}</p>
-                <p style="margin:0"><strong>Biaya Layanan (5%):</strong> Rp {{ number_format($service, 0, ',', '.') }}</p>
+                <p style="margin:0"><strong>Biaya Layanan (1%):</strong> Rp {{ number_format($service, 0, ',', '.') }}</p>
                 <h4 class="mt-3"><strong>Total:</strong> Rp {{ number_format($total, 0, ',', '.') }}</h4>
 
                 <div class="d-flex gap-2">

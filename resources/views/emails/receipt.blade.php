@@ -15,7 +15,7 @@
 
 **Subtotal**: Rp {{ number_format($receipt->total_price, 0, ',', '.') }}  
 **Pajak (10%)**: Rp {{ number_format($receipt->tax_amount, 0, ',', '.') }}  
-**Service (5%)**: Rp {{ number_format($receipt->service_charge, 0, ',', '.') }}  
+**Service (1%)**: Rp {{ number_format($receipt->service_charge, 0, ',', '.') }}  
 
 ## **Total: Rp {{ number_format($receipt->grand_total, 0, ',', '.') }}**
 

@@ -87,7 +87,7 @@
       <td class="amount">Rp. {{ number_format($receipt->tax_amount, 0, ',', '.') }}</td>
     </tr>
     <tr>
-      <td>Biaya Layanan (5%)</td>
+      <td>Biaya Layanan (1%)</td>
       <td class="amount">Rp. {{ number_format($receipt->service_charge, 0, ',', '.') }}</td>
     </tr>
     <tr class="total">

@@ -47,7 +47,7 @@ class PaymentController extends Controller
                 'table_number'    => $order->table_number,
                 'total_price'     => $totalPrice,
                 'tax_amount'      => $totalPrice * 0.1,
-                'service_charge'  => $totalPrice * 0.05,
+                'service_charge'  => $totalPrice * 0.01,
                 'grand_total'     => $totalPrice * 1.15,
                 'cashier_name'    => "System NALA",
                 'paid_at'         => now('Asia/Jakarta'),
