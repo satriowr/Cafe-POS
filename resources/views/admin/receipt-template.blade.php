@@ -62,7 +62,11 @@
   <p>
     No Nota : {{ $receipt->invoice_number }}<br>
     Tanggal : {{ \Carbon\Carbon::parse($receipt->paid_at)->format('d/m/Y H:i:s') }}<br>
-    Meja    : {{ $receipt->table_number }}<br>
+    Meja    : @if($receipt->table_number >= 100)
+                Takeaway
+              @else
+                  {{ $receipt->table_number }}
+              @endif<br>
     Kasir   : {{ $receipt->cashier_name }}<br>
   </p>
 

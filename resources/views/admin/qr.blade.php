@@ -74,7 +74,7 @@
         <!-- Meja 0 placed below -->
         <div class="row mt-3">
           <div class="col-12">
-            <button type="button" class="btn btn-outline-success w-100" onclick="selectTable(100)">Takeaway</button>
+            <button type="button" class="btn btn-outline-success w-100" onclick="takeaway()">Takeaway</button>
           </div>
         </div>
       </div>
@@ -104,27 +104,59 @@
 </style>
 
 <script>
+let generatedNumbers = new Set();
+
 function selectTable(tableNumber) {
     document.getElementById('table_number').value = tableNumber;
 
-    if (tableNumber === 100) {
+    if (tableNumber >= 100) {
         document.getElementById('selected-table').innerHTML = "Tipe Pemesanan: Takeaway";
     } else {
         document.getElementById('selected-table').innerHTML = "Nomor Meja yang Dipilih: " + tableNumber;
     }
 
-    // If table number 0 is selected, disable Dine-In radio button and set Takeaway as selected
-    if (tableNumber === 100) {
-        document.getElementById('dine_in').disabled = true;  // Disable Dine-In
-        document.getElementById('takeaway').checked = true;  // Set Takeaway as selected
-    } else {
-        document.getElementById('dine_in').disabled = false;  // Enable Dine-In
-        document.getElementById('takeaway').checked = false; // Deselect Takeaway
+    if (tableNumber <= 10) {
+        document.getElementById('dine_in').checked = true; 
+        document.getElementById('takeaway').disabled = true; 
     }
 
-    // Close the modal
     var modal = bootstrap.Modal.getInstance(document.getElementById('tableModal'));
     modal.hide();
 }
+
+function takeaway() {
+    let randomNumber = generateUniqueRandomNumber();
+
+    document.getElementById('table_number').value = randomNumber;
+    document.getElementById('selected-table').innerHTML = "Tipe Pemesanan: Takeaway, Nomor Meja: " + randomNumber;
+    console.log("Generated Unique Takeaway Number: ", randomNumber);
+
+    if (randomNumber >= 100) {
+        document.getElementById('selected-table').innerHTML = "Tipe Pemesanan: Takeaway";
+    }
+
+    if (randomNumber >= 100) {
+        document.getElementById('dine_in').disabled = true; 
+        document.getElementById('takeaway').checked = true; 
+    } else {
+        document.getElementById('dine_in').disabled = false;  
+        document.getElementById('takeaway').checked = false; 
+    }
+
+    var modal = bootstrap.Modal.getInstance(document.getElementById('tableModal'));
+    modal.hide();
+}
+
+function generateUniqueRandomNumber() {
+    let randomNumber;
+    do {
+        randomNumber = Math.floor(Math.random() * (999 - 100 + 1)) + 100; 
+    } while (generatedNumbers.has(randomNumber)); 
+
+    generatedNumbers.add(randomNumber);  
+    return randomNumber;
+}
 </script>
+
+
 @endsection

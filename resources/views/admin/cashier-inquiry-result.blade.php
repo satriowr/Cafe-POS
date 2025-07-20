@@ -38,7 +38,13 @@
         <div class="col-md-6">
             <h5>Detail Pembayaran:</h5>
             <p><strong>Invoice Number:</strong> {{ $receipt->invoice_number }}</p>
-            <p><strong>Meja:</strong> {{ $order->table_number }}</p>
+            <p><strong>Meja:</strong>
+            @if($order->table_number >= 100)
+                Takeaway
+            @else
+                {{ $order->table_number }}
+            @endif
+            </p>
             <p><strong>Tanggal:</strong> {{ \Carbon\Carbon::parse($receipt->paid_at)->format('d M Y H:i') }}</p>
             <p><strong>Total:</strong> Rp {{ number_format($receipt->grand_total, 0, ',', '.') }}</p>
 

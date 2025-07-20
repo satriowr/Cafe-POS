@@ -205,7 +205,7 @@ class CashierController extends Controller
             $itemSubtotal = $item->quantity * $item->menu_price;
             $subtotal += $itemSubtotal;
         }
-        $subtotalWith15Percent = $subtotal * 1.15;
+        $subtotalWith15Percent = $subtotal * 1.11;
 
         //dd($ordersWithGrandTotal);
         //dd($subtotal);
@@ -252,7 +252,7 @@ class CashierController extends Controller
             'total_price' => $totalPrice,
             'tax_amount' => $totalPrice * 0.1,
             'service_charge' => $totalPrice * 0.01,
-            'grand_total' => $totalPrice * 1.15,
+            'grand_total' => $totalPrice * 1.11,
             'cashier_name' => $name,
             'paid_at' => now('Asia/Jakarta'),
             'payment_type' => $paymentType,

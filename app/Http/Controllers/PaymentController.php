@@ -48,7 +48,7 @@ class PaymentController extends Controller
                 'total_price'     => $totalPrice,
                 'tax_amount'      => $totalPrice * 0.1,
                 'service_charge'  => $totalPrice * 0.01,
-                'grand_total'     => $totalPrice * 1.15,
+                'grand_total'     => $totalPrice * 1.11,
                 'cashier_name'    => "System NALA",
                 'paid_at'         => now('Asia/Jakarta'),
                 'payment_type'    => "Cashless",
@@ -68,15 +68,31 @@ class PaymentController extends Controller
     public function updatePayment(Request $request)
     {
         $token = $request->query('token');
-        
+        $paymentToken = $request->input('order_id');
+
+        //dd($paymentToken);
+
         $decodedToken = base64_decode(strtr($token, '-_', '+/'));
         [$table_number, $customer_email, $orderType] = explode('|', $decodedToken);
-        $receipt = Receipt::latest()->first();
-        $orders = Order::with('items.menu')->where('receipt_id', $receipt->id)->get();
 
-        Mail::to($customer_email)->send(new ReceiptEmail($receipt, $orders));
+        $order = DB::table('orders')
+                ->where('payment_token', $paymentToken)
+                ->first();
+        //dd($order);
 
-        return redirect()->route('user.status', ['token' => $token])->with('error', 'Pesanan tidak ditemukan.');
+        if (!$order) {
+            return redirect()->route('user.status', ['token' => $token])->with('error', 'Pesanan tidak ditemukan.');
+        }
+
+        $receipt = Receipt::find($order->receipt_id);
+
+        if ($receipt) {
+            $orders = Order::with('items.menu')->where('receipt_id', $receipt->id)->get();
+
+            Mail::to($customer_email)->send(new ReceiptEmail($receipt, $orders));
+        }
+
+        return redirect()->route('user.status', ['token' => $token])->with('success', 'Email receipt telah dikirim.');
     }
 
 

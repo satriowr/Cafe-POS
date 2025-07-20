@@ -163,8 +163,10 @@ class adminController extends Controller
         $table = $request->query('table_number');
         $customerIdentity = $request->query('customer_identity');
         $orderType = $request->query('order_type');
+
+        //dd($table, $customerIdentity, $orderType);
         
-        if (!$table || !$customerIdentity || !$orderType) {
+        if (!$customerIdentity) {
             return view('admin.qr');
         }
 

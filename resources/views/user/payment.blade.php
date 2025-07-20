@@ -32,12 +32,11 @@
                         order_id: result.order_id
                     })
                 }).then(() => {
-                    window.location.href = "/payment/update?token=" + encodeURIComponent("{{ $token }}");
+                    window.location.href = "/payment/update?token=" + encodeURIComponent("{{ $token }}") + "&order_id=" + encodeURIComponent(result.order_id);
                 });
             },
             onPending: function(result){
                 window.location.href = "{{ route('user.cart.show', ['token' => $token]) }}";
-                alert("Menunggu pembayaran...");
             },
             onError: function(result){
                 alert("Pembayaran gagal!");
