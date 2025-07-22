@@ -42,7 +42,13 @@ function fetchOrders() {
                 card.innerHTML = `
                     <div class="card h-100" data-order-id="${order.id}" onclick="confirmServe(${order.id})" style="background-color: #EFEFEF; color:black">
                         <div class="card-body">
-                            <h5 class="card-title">Meja ${order.table_number} - Antrian #${order.queue_number}</h5>
+                            <h5 class="card-title">
+                                ${order.table_number >= 100 ? 'Takeaway' : 'Meja ' + order.table_number} 
+                                - Antrian #${order.queue_number}
+                            </h5>
+                            <p class="card-title" style="font-size: 0.9em; color: black; font-weight: bold; margin: 0;">
+                                ${'ID Order: ' + order.id} 
+                            </p>
                             <p>Status: <strong>${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</strong></p>
                             <ul>
                                 ${order.items.map(item => `
